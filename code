@@ -1,0 +1,63 @@
+#include <DFRobot_DHT11.h>
+DFRobot_DHT11 DHT;
+#define DHT11_PIN 10
+#include <LiquidCrystal_I2C.h> 
+LiquidCrystal_I2C lcd(0x27, 16, 2); // ligne 8 
+void setup(){
+  Serial.begin(9600);
+  pinMode(3, OUTPUT); 
+  pinMode(13,OUTPUT); 
+  pinMode(2, INPUT); 
+  lcd.begin();
+  lcd.backlight();
+  lcd.setCursor(0, 0); // stand in the front line
+  lcd.print(" Automatic ");
+  lcd.setCursor(0, 1); // stand in the front line
+  lcd.print("Light Fan Cntrl");
+  delay(1000);
+  lcd.clear();
+}
+
+void loop(){
+  DHT.read(DHT11_PIN);
+  Serial.print("temp:");
+  Serial.print(DHT.temperature);
+  Serial.print("  humi:");
+  Serial.println(DHT.humidity);
+  
+  lcd.setCursor(0, 0); // stand in the front line
+  lcd.print("Tem:");
+   lcd.setCursor(4, 0); // stand in the front line
+  lcd.print(DHT.temperature);
+  lcd.setCursor(8, 0); // stand in the front line
+  lcd.print("Fan:");
+  if(DHT.temperature >= 30)
+  {
+    digitalWrite(3,LOW);
+  lcd.setCursor(12, 0); // stand in the front line
+  lcd.print("ON  ");
+  }
+  else if(DHT.temperature < 29)
+  {
+    digitalWrite(3,HIGH);  
+    lcd.setCursor(12, 0); // stand in the front line
+    lcd.print("OFF");
+   }
+    lcd.setCursor(0, 1); // stand in the front line
+    lcd.print("Light:");
+    int persondet=digitalRead(2);
+    
+    if(persondet==LOW)
+    {
+      digitalWrite(13,HIGH);
+    lcd.setCursor(7, 1); // stand in the front line
+    lcd.print("ON  ");
+    }
+    else
+    {
+     digitalWrite(13,LOW);
+     lcd.setCursor(7, 1);
+     lcd.print("OFF");
+    }  
+  delay(100);
+}
